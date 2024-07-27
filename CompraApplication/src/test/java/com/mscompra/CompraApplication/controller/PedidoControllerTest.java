@@ -2,14 +2,18 @@ package com.mscompra.CompraApplication.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mscompra.CompraApplication.CompraApplication;
+import com.mscompra.CompraApplication.model.Pedido;
 import com.mscompra.CompraApplication.service.DadosMock;
 import com.mscompra.CompraApplication.service.PedidoService;
+import com.mscompra.CompraApplication.service.rabbitmq.Producer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -34,6 +38,9 @@ public class PedidoControllerTest {
     @Autowired
     private ObjectMapper mapper;
 
+    @MockBean
+    private Producer producer;
+
     private DadosMock dadosMock = new DadosMock();
 
     private static final String ROTA_PEDIDO = "/pedido";
@@ -42,6 +49,8 @@ public class PedidoControllerTest {
     @Test
     void deveCadastrarPedidoComSucesso() throws Exception {
         var pedidoBody = dadosMock.getPedido();
+
+        Mockito.doNothing().when(producer).enviarPedido(Mockito.any(Pedido.class));
 
         mockMvc.perform(post(ROTA_PEDIDO)
                 .content(mapper.writeValueAsString(pedidoBody))
