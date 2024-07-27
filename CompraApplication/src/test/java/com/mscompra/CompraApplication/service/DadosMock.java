@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Service
 public class DadosMock {
-    Pedido getPedido(){
+    public Pedido getPedido(){
         return Pedido.builder()
                 .nome("Lucas Barros")
                 .produto(1L)
